@@ -5,11 +5,55 @@ import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, FormEvent} from "react";
+
+const ADMIN_CREDENTIALS = {
+  email: "admin@admin.com",
+  password: "admin123"
+};
+
+
+
 
 export default function SignInForm() {
+
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+
+  const handleSignIn = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("")
+
+    if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+      setIsAdmin(true);
+      setError("");
+      console.log("Admin logged in successfully");
+      return;
+    }
+
+    if (email === ADMIN_CREDENTIALS.email){
+      setError("Invalid admin credentials");
+      return;
+    }
+
+    console.log("Regular user login attempt");
+
+
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  }
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  }
+
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
@@ -84,13 +128,19 @@ export default function SignInForm() {
                 </span>
               </div>
             </div>
-            <form>
+            <form onSubmit={handleSignIn}>
               <div className="space-y-6">
                 <div>
                   <Label>
                     Email <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <Input placeholder="info@gmail.com" type="email" />
+                  <Input
+                      placeholder="info@gmail.com"
+                      type="email"
+                      name="email"
+                      defaultValue={email}
+                      onChange={handleEmailChange}
+                  />
                 </div>
                 <div>
                   <Label>
@@ -99,7 +149,10 @@ export default function SignInForm() {
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
+                      name={"password"}
                       placeholder="Enter your password"
+                      onChange={handlePasswordChange}
+                      defaultValue={password}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -128,27 +181,16 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm">
+                  <Button className="w-full" size = "sm" onClick={() => {}}>
                     Sign in
                   </Button>
                 </div>
               </div>
             </form>
-
-            <div className="mt-5">
-              <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Don&apos;t have an account? {""}
-                <Link
-                  href="/signup"
-                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                >
-                  Sign Up
-                </Link>
-              </p>
-            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
